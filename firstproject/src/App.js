@@ -7,6 +7,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>srinath</h1>
+        <h2> welcome to git hub
+        
+        </h2>
         
         <p>
           Edit <code>src/App.js</code> and save to reload.
