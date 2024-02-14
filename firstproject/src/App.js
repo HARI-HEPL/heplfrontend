@@ -9,7 +9,7 @@ function App() {
         <h1>Hello Everyone, Welcome to React</h1>
         
         <p>
-          <p>this is Boopathy</p>
+          <p>this is prashanth</p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
