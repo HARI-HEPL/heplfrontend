@@ -178,10 +178,8 @@
 //     </div>
 //   );
 // }
-
 import React, { useState } from 'react';
-//import { readFile } from 'xlsx';
-import Button from '@mui/material/Button';
+import { Button, Table, TableHead, TableBody, TableCell, TableRow } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -195,7 +193,7 @@ const FileUploaderViewer = () => {
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setFiles(selectedFiles);
+    setFiles([...files, ...selectedFiles]); // Append new files to existing files list
   };
 
   const handleViewFile = (file) => {
@@ -206,6 +204,32 @@ const FileUploaderViewer = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedFile(null);
+  };
+
+  const handleUpload = (file) => {
+    // Here you can implement the upload logic for the specific file
+    console.log(`Uploading ${file.name}`);
+    // Example: You can use fetch API or any library to upload the file to your server
+    // Here is a simplified example using fetch API to upload the file
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch('http://your-upload-endpoint', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => {
+        // Handle response from server
+        console.log(`File ${file.name} uploaded successfully.`);
+      })
+      .catch((error) => {
+        // Handle error
+        console.error('Error uploading file:', error);
+      });
+  };
+
+  const handleDeleteFile = (file) => {
+    const updatedFiles = files.filter((f) => f !== file);
+    setFiles(updatedFiles);
   };
 
   return (
@@ -219,40 +243,60 @@ const FileUploaderViewer = () => {
         onChange={handleFileChange}
       />
       <label htmlFor="contained-button-file">
-        <Button variant="contained" component="span" style={{ marginRight: '8px' }}>
+        <Button variant="contained" component="span">
           Upload Files
         </Button>
       </label>
-      {files.map((file, index) => (
-        <Button key={index} variant="outlined" onClick={() => handleViewFile(file)}>
-          {file.name}
-        </Button>
-      ))}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Filename</TableCell>
+            <TableCell>View File</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {files.map((file, index) => (
+            <TableRow key={index}>
+              <TableCell>{file.name}</TableCell>
+              <TableCell>
+                <Button variant="outlined" onClick={() => handleViewFile(file)}>
+                  View
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button variant="outlined" onClick={() => handleDeleteFile(file)}>
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Uploaded File</DialogTitle>
         <DialogContent>
-  <DialogContentText>
-    {selectedFile && (
-      <div>
-        <p>Name: {selectedFile.name}</p>
-        <p>Type: {selectedFile.type}</p>
-        {selectedFile.type.includes('image') && (
-          <img src={URL.createObjectURL(selectedFile)} alt={selectedFile.name} style={{ maxWidth: '100%' }} />
-        )}
-        {selectedFile.type.includes('video') && (
-          <video controls style={{ maxWidth: '100%' }}>
-            <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
-            Your browser does not support the video tag.
-          </video>
-        )}
-        {selectedFile.name.endsWith('.xls') || selectedFile.name.endsWith('.xlsx') ? (
-          <p>Display Excel content here</p>
-        ) : null}
-      </div>
-    )}
-  </DialogContentText>
-</DialogContent>
-
+          <DialogContentText>
+            {selectedFile && (
+              <div>
+                <p>Name: {selectedFile.name}</p>
+                <p>Type: {selectedFile.type}</p>
+                {selectedFile.type.includes('image') && (
+                  <img src={URL.createObjectURL(selectedFile)} alt={selectedFile.name} style={{ maxWidth: '100%' }} />
+                )}
+                {selectedFile.type.includes('video') && (
+                  <video controls style={{ maxWidth: '100%' }}>
+                    <source src={URL.createObjectURL(selectedFile)} type={selectedFile.type} />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+                {selectedFile.name.endsWith('.xls') || selectedFile.name.endsWith('.xlsx') ? (
+                  <p>Display Excel content here</p>
+                ) : null}
+              </div>
+            )}
+          </DialogContentText>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Close</Button>
         </DialogActions>
