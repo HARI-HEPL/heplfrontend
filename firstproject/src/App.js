@@ -1,117 +1,94 @@
-import React, { useState } from "react";
-import { Button, Container, Grid, Modal } from "@mui/material";
 
-const MediaUploadDisplay = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [selectedPdf, setSelectedPdf] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Drawer, List, ListItem, Collapse } from '@material-ui/core';
+import { HomeOutlined, RssFeedOutlined, AssignmentOutlined, WorkOutlined, FormatListNumberedOutlined, ExitToAppOutlined, CheckCircleOutline } from '@material-ui/icons';
+import logo from './Group 2.png';
 
-  const handleImageChange = (event) => {
-    setSelectedImage(event.target.files[0]);
+const iconMapping = {
+  Home: <HomeOutlined />,
+  Feed: <RssFeedOutlined />,
+  Reports: <AssignmentOutlined />,
+  Projects: <WorkOutlined />,
+  Tasks: <FormatListNumberedOutlined />,
+  Logout: <ExitToAppOutlined />,
+  Milestones: <CheckCircleOutline />
+};
+
+const useStyles = makeStyles({
+  list: {
+    width: 250,
+    background: 'linear-gradient(179.66deg, #01DCBA -0.77%, #7D32CB 98.56%, #7F30CB 98.57%)',
+    color: 'white',
+    height: '100vh',
+    padding: 10
+  },
+  line: {
+    border: '1px solid lightgray',
+    margin: '10px 0',
+  },
+  logoutText: {
+    color: 'red',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+  }
+});
+
+export default function App() {
+  const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [openMenus, setOpenMenus] = useState({});
+
+  const handleMenuToggle = (menu) => {
+    setOpenMenus({
+      ...openMenus,
+      [menu]: !openMenus[menu]
+    });
   };
 
-  const handleVideoChange = (event) => {
-    setSelectedVideo(event.target.files[0]);
-  };
-
-  const handlePdfChange = (event) => {
-    setSelectedPdf(event.target.files[0]);
-  };
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleLogout = () => {
+    setOpen(false); // Close the sidebar when logout is clicked
   };
 
   return (
-    <Container>
-      <h1>Upload and Display Media using React Hooks and Material-UI</h1>
-
-      <h2>Image Upload:</h2>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        </Grid>
-        <Grid item>
-          {selectedImage && (
-            <div>
-              <Button variant="contained" onClick={handleOpenModal}>
-                View Image
-              </Button>
-              <Modal open={openModal} onClose={handleCloseModal}>
-                <img
-                  alt="Uploaded Image"
-                  width={"500px"}
-                  src={URL.createObjectURL(selectedImage)}
-                />
-              </Modal>
-            </div>
-          )}
-        </Grid>
-      </Grid>
-      <br />
-
-      <h2>Video Upload:</h2>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item>
-          <input type="file" accept="video/*" onChange={handleVideoChange} />
-        </Grid>
-        <Grid item>
-          {selectedVideo && (
-            <div>
-              <Button variant="contained" onClick={handleOpenModal}>
-                View Video
-              </Button>
-              <Modal open={openModal} onClose={handleCloseModal}>
-                <video width="640" height="480" controls>
-                  <source
-                    src={URL.createObjectURL(selectedVideo)}
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
-              </Modal>
-            </div>
-          )}
-        </Grid>
-      </Grid>
-      <br />
-
-      <h2>PDF Upload:</h2>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item>
-          <input type="file" accept=".pdf" onChange={handlePdfChange} />
-        </Grid>
-        <Grid item>
-          {selectedPdf && (
-            <div>
-              <Button variant="contained" onClick={handleOpenModal}>
-                View PDF
-              </Button>
-              <Modal open={openModal} onClose={handleCloseModal}>
-                <iframe
-                  src={URL.createObjectURL(selectedPdf)}
-                  width="800"
-                  height="600"
-                  title="PDF Document"
-                ></iframe>
-              </Modal>
-            </div>
-          )}
-        </Grid>
-      </Grid>
-      <br />
-    </Container>
+    <div>
+      <button onClick={() => setOpen(true)}>Open Sidebar</button>
+      <Drawer open={open} onClose={() => setOpen(false)}>
+        <div className={classes.list}>
+          <img src={logo} alt="Cavin Infotech" />
+          <hr className={classes.line} />
+          <List>
+            <ListItem button onClick={() => handleMenuToggle('mainMenu')}>
+              Main Menu
+            </ListItem>
+            <Collapse in={openMenus.mainMenu}>
+              <List>
+                <ListItem button>{iconMapping['Home']} Home</ListItem>
+                <ListItem button>{iconMapping['Feed']} Feed</ListItem>
+                <ListItem button>{iconMapping['Reports']} Reports</ListItem>
+                <ListItem button>{iconMapping['Projects']} Projects</ListItem>
+              </List>
+            </Collapse>
+            <hr className={classes.line} />
+            <ListItem button onClick={() => handleMenuToggle('overview')}>
+              Overview
+            </ListItem>
+            <Collapse in={openMenus.overview}>
+              <List>
+                <ListItem button>
+                  {iconMapping['Tasks']} Tasks
+                </ListItem>
+                <ListItem button>
+                  {iconMapping['Milestones']} Milestones
+                </ListItem>
+              </List>
+            </Collapse>
+          </List>
+          <p className={classes.logoutText} onClick={handleLogout}>
+            {iconMapping['Logout']} Logout
+          </p>
+        </div>
+      </Drawer>
+    </div>
   );
-};
-
-export default MediaUploadDisplay;
-
-
-
-
-
+}
