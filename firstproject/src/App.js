@@ -9,6 +9,7 @@ function App() {
         <h1>Hello Everyone, Welcome to React Prashanth</h1>
         
         <p>
+          <p>this is prashanth</p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
@@ -17,7 +18,8 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Learn React with git
+          
         </a>
       </header>
     </div>
